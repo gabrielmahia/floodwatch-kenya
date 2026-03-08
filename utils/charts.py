@@ -219,16 +219,11 @@ def blocker_treemap(df: pd.DataFrame) -> go.Figure:
 def resilience_radar(cities: list[dict]) -> go.Figure:
     """Polar radar comparing resilience dimensions across cities."""
     dimensions = [
-        ("riparian_compliance_pct", "Riparian
-Compliance"),
-        ("drainage_coverage_pct",   "Drainage
-Coverage"),
-        ("early_warning_hours",     "Early
-Warning"),
-        ("flood_budget_usd_per_capita", "Flood Budget
-(USD/capita)"),
-        ("resilience_score",        "Overall
-Resilience"),
+        ("riparian_compliance_pct",       "Riparian Compliance"),
+        ("drainage_coverage_pct",         "Drainage Coverage"),
+        ("early_warning_hours",           "Early Warning"),
+        ("flood_budget_usd_per_capita",   "Flood Budget (USD/capita)"),
+        ("resilience_score",              "Overall Resilience"),
     ]
     # Normalise each dimension to 0–100
     max_vals = {
