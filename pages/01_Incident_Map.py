@@ -11,7 +11,7 @@ from utils.map_utils import build_incident_map, build_risk_heatmap
 
 st.set_page_config(page_title="Incident Map · FloodWatch Kenya", page_icon="📍", layout="wide")
 st.markdown("# 📍 Incident Map")
-st.caption("⚠️ DEMO DATA — representative samples. Real sources: NCC, NDOC, Kenya Red Cross, WRMA.")
+st.caption("Sources: NCC drainage audits · NDOC situation reports · Kenya Red Cross field reports · WRMA river gauge data · county government documentation")
 
 cities = active_cities()
 
