@@ -211,12 +211,12 @@ with st.sidebar:
     st.markdown(f"**{len(cities)} cities** · **{total_incidents} incidents** · **{total_policies} policies**")
     st.divider()
     st.markdown("### Navigate")
-    st.markdown("Use the pages above to explore:
+    st.markdown("""Use the pages above to explore:
 - Incident maps per city
 - Policy accountability
 - City benchmarks
 - Risk calculator
-- Community reports")
+- Community reports""")
     st.divider()
     st.markdown("### Design principle")
     st.markdown("*The enforcement gap is the story. Every feature connects back to the distance between policy existence and implementation.*")
