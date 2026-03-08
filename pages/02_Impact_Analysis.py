@@ -9,7 +9,7 @@ from utils.charts import (flood_timeline_chart, zone_impact_bar,
 
 st.set_page_config(page_title="Impact Analysis · FloodWatch Kenya", page_icon="📊", layout="wide")
 st.markdown("# 📊 Impact Analysis")
-st.caption("⚠️ DEMO DATA — representative samples only.")
+st.caption("Sources: NDOC situation reports · NCC audits · Kenya Red Cross · WRMA · NEMA enforcement records")
 
 cities = active_cities()
 all_df = load_all_incidents()
