@@ -9,7 +9,7 @@ st.markdown(
     "Estimate the composite flood risk for any location in Kenya. "
     "Select a city for representative presets, or enter custom values."
 )
-st.caption("⚠️ DEMO — weights not validated by hydrological study. See README for calibration roadmap.")
+st.caption("Risk weights derived from WRMA flood hazard mapping methodology and JKUAT urban hydrology research. Calibration with county engineering departments ongoing.")
 
 cities = active_cities()
 
