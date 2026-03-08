@@ -94,7 +94,7 @@ with tab2:
 
 st.divider()
 st.markdown("### SMS / WhatsApp reporting")
-    st.markdown("Send flood reports via SMS to **+254 800 723 253** (NDOC hotline) or WhatsApp **+254 721 337 885** (Kenya Red Cross). Reports submitted here are logged and available to county emergency coordinators.")
+st.markdown("Send flood reports via SMS to **+254 800 723 253** (NDOC hotline) or WhatsApp **+254 721 337 885** (Kenya Red Cross). Reports submitted here are logged and available to county emergency coordinators.")
 st.markdown("""
 Remove the web access barrier for communities in Mathare, Kibera, Garissa, Budalangi, and Mandera:
 ```
