@@ -1,13 +1,9 @@
 # Contributing
 
-## Data contributions
-- All changes to `incidents.csv` and `policies.csv` must include a source citation in the PR description.
-- The `resilience_score` in `city_benchmarks.json` is manually curated — changes require a documented rationale.
+- Data changes to `incidents.csv` / `policies.csv` require a source citation in the PR.
+- `resilience_score` in `city_benchmarks.json` is manually curated — changes need documented rationale.
+- `blocking_factor` in policies is intentionally qualitative; do not normalise to an enum without discussion.
+- `data/community_reports.csv` is excluded from git — it contains sensitive location data.
 - New benchmark cities must include `transferable` lessons specific to Nairobi's context.
-- The `blocking_factor` field in policies is intentionally qualitative. Do not normalise to an enum without discussion.
 
-## Community report data
-`data/community_reports.csv` is excluded from git via `.gitignore` — it contains potentially sensitive location data.
-
-## Code contributions
-Open an Issue before large PRs. Discuss architecture changes before implementing.
+Open Issues for bugs, data corrections, and feature requests.
