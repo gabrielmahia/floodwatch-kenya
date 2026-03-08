@@ -92,7 +92,11 @@ with col_map:
         ).reset_index()
         # city_stats.city_id matches cities_df.id — rename before merge
         city_stats = city_stats.rename(columns={"city_id": "id"})
-        cities_df = cities_df.merge(city_stats, on="id", how="left").fillna(0)
+        if not city_stats.empty and "id" in city_stats.columns:
+            cities_df = cities_df.merge(city_stats, on="id", how="left").fillna(0)
+        else:
+            for col in ["total_incidents","total_deaths","total_displaced"]:
+                cities_df[col] = 0
     else:
         cities_df["total_incidents"] = 0
         cities_df["total_deaths"] = 0
