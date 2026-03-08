@@ -3,4 +3,3 @@ pandas>=2.0
 plotly>=5.18
 folium>=0.15
 streamlit-folium>=0.18
-numpy>=1.26
