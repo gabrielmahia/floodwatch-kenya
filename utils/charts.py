@@ -203,33 +203,57 @@ def budget_gap_chart(df: pd.DataFrame) -> go.Figure:
 
 
 def blocker_treemap(df: pd.DataFrame) -> go.Figure:
-    """Treemap of blocking factors, sized by lives at risk."""
-    df = df[df["status"] != "Completed"].copy()
-    if df.empty:
-        return dark_layout(go.Figure(), "Blocking Factors", 300)
-    df["lives_saved_estimate"] = pd.to_numeric(
-        df["lives_saved_estimate"], errors="coerce"
-    ).fillna(1).clip(lower=1)  # treemap requires positive values
-    short = (df["blocking_factor"].astype(str)
-             .str.split(" and ").str[0]
-             .str.split(",").str[0]
-             .str[:40])
-    try:
-        fig = px.treemap(
-            df, path=[short], values="lives_saved_estimate",
-            color="lives_saved_estimate",
-            color_continuous_scale=["#1A1F2E", "#FF6B35", "#FF3333"],
-        )
-    except Exception:
-        agg = df.copy()
-        agg["blocker_short"] = short
-        agg = agg.groupby("blocker_short")["lives_saved_estimate"].apply(lambda x: pd.to_numeric(x, errors="coerce").fillna(0).sum()).reset_index()
-        agg = agg.sort_values("lives_saved_estimate", ascending=True)
-        fig = px.bar(agg, x="lives_saved_estimate", y="blocker_short", orientation="h",
-                     color="lives_saved_estimate",
-                     color_continuous_scale=["#1A1F2E","#FF6B35","#FF3333"],
-                     labels={"lives_saved_estimate": "Lives at risk", "blocker_short": "Blocker"})
-    return dark_layout(fig, "Blocking Factors — Lives at Risk", 400)
+    """Ranked bar chart of blocking factors by lives at risk.
+    Replaces treemap — avoids Plotly non-leaf constraint on empty path values.
+    """
+    blocked = df[df["status"] != "Completed"].copy()
+    if blocked.empty:
+        fig = go.Figure()
+        fig.add_annotation(text="No unresolved blockers", showarrow=False,
+                           font=dict(color="#888", size=14))
+        return dark_layout(fig, "Blocking Factors — Lives at Risk", 250)
+
+    blocked["lives_saved_estimate"] = pd.to_numeric(
+        blocked["lives_saved_estimate"], errors="coerce"
+    ).fillna(0)
+
+    # Shorten blocker labels for display
+    blocked["blocker_short"] = (
+        blocked["blocking_factor"]
+        .astype(str)
+        .str.split(" and ").str[0]
+        .str.split(",").str[0]
+        .str.strip()
+        .str[:52]
+    )
+    # Drop empty labels
+    blocked = blocked[blocked["blocker_short"].str.len() > 0]
+    if blocked.empty:
+        fig = go.Figure()
+        return dark_layout(fig, "Blocking Factors — Lives at Risk", 250)
+
+    agg = (
+        blocked.groupby("blocker_short", as_index=False)["lives_saved_estimate"]
+        .sum()
+        .sort_values("lives_saved_estimate", ascending=True)
+    )
+
+    fig = px.bar(
+        agg,
+        x="lives_saved_estimate",
+        y="blocker_short",
+        orientation="h",
+        color="lives_saved_estimate",
+        color_continuous_scale=["#FF6B35", "#FF3333"],
+        labels={
+            "lives_saved_estimate": "Estimated lives saved if resolved",
+            "blocker_short": "",
+        },
+        text="lives_saved_estimate",
+    )
+    fig.update_traces(textposition="outside", textfont_color="#FFFFFF")
+    fig.update_layout(coloraxis_showscale=False, yaxis_tickfont_size=11)
+    return dark_layout(fig, "Blocking Factors — Lives at Risk (if resolved)", 420)
 def resilience_radar(cities: list[dict]) -> go.Figure:
     """Polar radar comparing resilience dimensions across cities."""
     dimensions = [
