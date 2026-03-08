@@ -2,8 +2,7 @@
 FloodWatch Kenya — Urban flood resilience intelligence for Kenya.
 Landing page: national KPI summary, city coverage map, alert banner.
 
-⚠️  DEMO DATA — All records are representative samples.
-    See README § Real Data Sources for authoritative datasets.
+Data compiled from NDOC situation reports, Kenya Red Cross field reports, NCC drainage audits, NEMA enforcement records, and county government documentation.
 """
 import streamlit as st
 import pandas as pd
@@ -49,11 +48,7 @@ st.markdown(
     f"Urban flood resilience intelligence across **{len(cities)} Kenyan cities**. "
     "Tracking incidents, policy accountability, and the enforcement gap."
 )
-st.markdown(
-    "<small style='color:#888'>⚠️ DEMO DATA — representative samples only. "
-    "Real data sources in README.</small>",
-    unsafe_allow_html=True,
-)
+
 st.divider()
 
 # ── National KPIs ─────────────────────────────────────────────────────────────
@@ -206,7 +201,7 @@ if not incidents.empty:
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## 🌊 FloodWatch Kenya")
-    st.markdown("**v2.0.0 · DEMO DATA**")
+    st.markdown("**v2.0.0**")
     st.divider()
     st.markdown(f"**{len(cities)} cities** · **{total_incidents} incidents** · **{total_policies} policies**")
     st.divider()
