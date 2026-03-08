@@ -31,7 +31,7 @@ def load_incidents(city_id: str) -> pd.DataFrame:
     path = Path(city["incidents_file"])
     if not path.exists():
         return pd.DataFrame()
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, on_bad_lines='skip')
     df["city_id"]   = city_id
     df["city_name"] = city["name"]
     df["county"]    = city["county"]
@@ -47,7 +47,7 @@ def load_policies(city_id: str) -> pd.DataFrame:
     path = Path(city["policies_file"])
     if not path.exists():
         return pd.DataFrame()
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, on_bad_lines='skip')
     df["city_id"]   = city_id
     df["city_name"] = city["name"]
     return df
