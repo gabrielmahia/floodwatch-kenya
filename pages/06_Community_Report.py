@@ -1,109 +1,110 @@
-"""FloodWatch NBI - Page 06: Community Report."""
-from pathlib import Path
-from datetime import datetime
-import csv
+"""Page 6 — Community Report: citizen incident and infrastructure failure submission."""
 import streamlit as st
+import pandas as pd
+import os
+from datetime import date
 
-st.set_page_config(page_title="Community Report - FloodWatch NBI", page_icon="report", layout="wide")
-st.title("Report a Flood Incident")
+st.set_page_config(page_title="Community Report · FloodWatch NBI", page_icon="📣", layout="wide")
+st.markdown("# 📣 Community Report")
 st.markdown(
-    "Submit a flood incident or infrastructure failure observation. "
-    "Community reports supplement structural incident data — they are not automatically "
-    "added to the main incident log without admin review."
+    "Submit a flood incident or infrastructure failure. "
+    "Reports are reviewed before being added to the main incident map."
 )
-st.caption(
-    "Reports are stored in data/community_reports.csv (excluded from git). "
-    "SMS gateway for offline submission planned — see HANDOFF.md section 6.5."
+st.info(
+    "**Privacy notice:** Location data you submit will be stored locally. "
+    "Community reports are excluded from the public GitHub repository. "
+    "This form requires web access — SMS gateway coming in a future release (see README § 6.5).",
 )
 
-ROOT = Path(__file__).parent.parent
-REPORTS_FILE = ROOT / "data" / "community_reports.csv"
-FIELDNAMES = [
-    "submitted_at", "reporter_type", "location", "lat_approx",
-    "lon_approx", "severity_estimate", "incident_type",
-    "description", "infra_failure", "contact_optional", "verified",
-]
+tab1, tab2 = st.tabs(["Submit report", "View submitted reports"])
 
-with st.form("report_form"):
-    st.markdown("### Incident details")
-    col1, col2 = st.columns(2)
-    with col1:
-        reporter_type = st.selectbox(
-            "I am reporting as",
-            ["Resident", "Community organiser", "NGO / CBO worker",
-             "Journalist", "Local official", "Other"],
-        )
-        location = st.text_input("Location (estate, road, landmark)", placeholder="e.g. Mathare 4A near the bridge")
-        severity = st.selectbox("Estimated severity",
-            ["Critical — deaths or life threat", "High — major displacement",
-             "Medium — property damage", "Low — minor flooding"])
-    with col2:
-        incident_type = st.selectbox(
-            "Incident type",
-            ["River overflow", "Flash flood", "Drainage failure",
-             "Culvert blockage", "Riparian encroachment", "Other"],
-        )
-        infra_failure = st.multiselect(
-            "Infrastructure failure observed",
-            ["Blocked drainage", "Collapsed road", "Damaged bridge",
-             "Flooded buildings", "No early warning", "No emergency response"],
-        )
-        contact = st.text_input("Contact (optional — for follow-up only)", placeholder="Phone or email")
+with tab1:
+    st.markdown("### New incident report")
+    with st.form("community_report"):
+        col1, col2 = st.columns(2)
+        with col1:
+            r_date     = st.date_input("Date of incident", value=date.today())
+            r_location = st.text_input("Location (estate / street name)", placeholder="e.g. Mathare Valley, near school")
+            r_zone     = st.selectbox("Zone", ["Mathare","Kibera","Mukuru","Kasarani","Eastlands",
+                                                "Westlands","Langata","Kajiado North","Other"])
+            r_severity = st.selectbox("Severity", ["Critical","High","Medium","Low"])
+            r_cause    = st.selectbox("Primary cause",
+                                       ["River overflow","Flash flood","Drainage failure",
+                                        "Blocked drain","Infrastructure failure","Other"])
+        with col2:
+            r_deaths     = st.number_input("Estimated deaths", min_value=0, value=0)
+            r_displaced  = st.number_input("Estimated displaced persons", min_value=0, value=0)
+            r_damage_ksh = st.number_input("Estimated damage (KSh millions, 0 if unknown)", min_value=0.0, value=0.0, step=0.5)
+            r_infra      = st.selectbox("Infrastructure failure type",
+                                         ["None","Blocked drain","Collapsed culvert","Overflowing manhole",
+                                          "Eroded road","Burst pipe","Other"])
+            r_policy     = st.selectbox("Was a relevant policy / restriction in place?",
+                                         ["Unknown","Yes — not being enforced","Yes — being enforced","No relevant policy"])
+        r_description = st.text_area("Description (optional)", height=100,
+                                      placeholder="What happened? What infrastructure failed? What response did you observe?")
+        r_reporter    = st.text_input("Your name or organisation (optional — for follow-up only)")
+        submitted = st.form_submit_button("Submit report", type="primary")
 
-    st.markdown("### Description")
-    description = st.text_area(
-        "What happened? Include time, approximate number of people affected, and any official response you observed.",
-        height=120,
-        placeholder="e.g. At approximately 3pm on Saturday the river burst banks near the footbridge. "
-                    "About 200 people had to move. County vehicles arrived after 5 days."
-    )
+    if submitted:
+        if not r_location.strip():
+            st.error("Location is required.")
+        else:
+            report = {
+                "submitted_at": pd.Timestamp.now().isoformat(),
+                "date": r_date.isoformat(),
+                "location": r_location.strip(),
+                "zone": r_zone,
+                "severity": r_severity,
+                "cause": r_cause,
+                "deaths": int(r_deaths),
+                "displaced": int(r_displaced),
+                "infra_damage_ksh_m": float(r_damage_ksh),
+                "infra_failure": r_infra,
+                "policy_status": r_policy,
+                "description": r_description.strip(),
+                "reporter": r_reporter.strip(),
+                "verified": False,
+            }
+            os.makedirs("data", exist_ok=True)
+            reports_path = "data/community_reports.csv"
+            if os.path.exists(reports_path):
+                existing = pd.read_csv(reports_path)
+                updated = pd.concat([existing, pd.DataFrame([report])], ignore_index=True)
+            else:
+                updated = pd.DataFrame([report])
+            updated.to_csv(reports_path, index=False)
+            st.success(
+                f"Report submitted for **{r_location}** ({r_date}). "
+                "Thank you. Reports are reviewed before appearing on the incident map."
+            )
 
-    st.markdown("### Approximate location (optional)")
-    st.caption("Enter decimal degrees if known. Used to place report on the map after verification.")
-    col3, col4 = st.columns(2)
-    lat = col3.text_input("Latitude (decimal degrees)", placeholder="-1.259")
-    lon = col4.text_input("Longitude (decimal degrees)", placeholder="36.860")
-
-    submitted = st.form_submit_button("Submit report", type="primary")
-
-if submitted:
-    if not location or not description:
-        st.error("Location and description are required.")
+with tab2:
+    reports_path = "data/community_reports.csv"
+    if os.path.exists(reports_path):
+        df = pd.read_csv(reports_path)
+        if len(df) == 0:
+            st.info("No community reports submitted yet.")
+        else:
+            st.metric("Total reports submitted", len(df))
+            st.metric("Pending review", len(df[df["verified"] == False]))
+            st.dataframe(
+                df[["date","location","zone","severity","cause","deaths","displaced","verified"]]
+                .sort_values("date", ascending=False).reset_index(drop=True),
+                use_container_width=True,
+                column_config={"verified": st.column_config.CheckboxColumn("Verified")}
+            )
+            st.caption("Verified reports will appear on the incident map in a future release (see README § 6.4).")
     else:
-        row = {
-            "submitted_at":    datetime.utcnow().isoformat(),
-            "reporter_type":   reporter_type,
-            "location":        location,
-            "lat_approx":      lat or "",
-            "lon_approx":      lon or "",
-            "severity_estimate": severity,
-            "incident_type":   incident_type,
-            "description":     description,
-            "infra_failure":   "; ".join(infra_failure),
-            "contact_optional": contact,
-            "verified":        "false",
-        }
-        write_header = not REPORTS_FILE.exists()
-        REPORTS_FILE.parent.mkdir(exist_ok=True)
-        with open(REPORTS_FILE, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-            if write_header:
-                writer.writeheader()
-            writer.writerow(row)
-        st.success(
-            "Report submitted. Thank you. "
-            "It will be reviewed by the FloodWatch admin team before appearing on the map."
-        )
-        st.info(
-            "**What happens next:** An admin will verify your report against other sources. "
-            "If confirmed, it will be added to the incident map with source labelled 'Community'. "
-            "Your contact details (if provided) will only be used for follow-up."
-        )
+        st.info("No community reports submitted yet in this session.")
 
 st.divider()
-st.markdown("### Cannot access the web form?")
-st.markdown(
-    "An SMS gateway for reporting via basic mobile is planned. "
-    "Proposed keyword protocol: `FLOOD [LOCATION] [SEVERITY]` → send to shortcode. "
-    "See HANDOFF.md section 6.5 for implementation notes."
-)
+st.markdown("### SMS reporting (coming soon)")
+st.markdown("""
+The next version will accept reports via SMS using Africa's Talking:
+```
+FLOOD [LOCATION] [SEVERITY]
+Send to: XXXXX
+```
+This removes the web access requirement for reporters in Mathare, Kibera, and Mukuru
+where mobile data is metered. See [README § 6.5](https://github.com/gabrielmahia/floodwatch-nbi#65-sms--whatsapp-gateway-for-community-reports) for implementation plan.
+""")
