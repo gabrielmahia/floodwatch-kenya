@@ -1,25 +1,14 @@
 """
-FloodWatch NBI — Landing page.
+FloodWatch NBI — Urban flood resilience intelligence for Nairobi.
 
-KPI summary, active alert banner, and enforcement gap headline.
-All analytical pages are in pages/ and load via Streamlit multi-page routing.
+Landing page: alert banner, KPI summary, quick navigation.
 
-⚠ DEMO DATA — All incident figures are illustrative samples.
-  Real data should be sourced from NCC, NDOC, and Kenya Red Cross.
+⚠️  DEMO DATA — All incident and policy records are representative samples.
+    Real data sources listed in README § 12.
 """
-import json
-from pathlib import Path
-
-import pandas as pd
 import streamlit as st
+import pandas as pd
 
-from utils.charts import (
-    dark_layout,
-    enforcement_gap_chart,
-    flood_timeline_chart,
-)
-
-# ── Page config ────────────────────────────────────────────────
 st.set_page_config(
     page_title="FloodWatch NBI",
     page_icon="🌊",
@@ -27,95 +16,137 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ── Load data ──────────────────────────────────────────────────
-ROOT = Path(__file__).parent
-
+# ── Load data ──────────────────────────────────────────────────────────────────
 @st.cache_data
 def load_incidents():
-    df = pd.read_csv(ROOT / "data" / "incidents.csv", parse_dates=["date"])
-    df["policy_existed"]  = df["policy_existed"].astype(bool)
-    df["policy_enforced"] = df["policy_enforced"].astype(bool)
-    return df
+    return pd.read_csv("data/incidents.csv")
 
 @st.cache_data
-def load_benchmarks():
-    with open(ROOT / "data" / "city_benchmarks.json") as f:
-        return json.load(f)["cities"]
+def load_policies():
+    return pd.read_csv("data/policies.csv")
 
-df = load_incidents()
+incidents = load_incidents()
+policies  = load_policies()
 
-# ── Alert banner (hardcoded — replace with KMD API) ────────────
-st.markdown("""
-<div style="background:#7C2D12;border-left:4px solid #EF4444;padding:12px 16px;
-            border-radius:4px;font-family:monospace;margin-bottom:1rem;">
-  🔴 <b>ACTIVE ALERT — Long Rains Season</b> &nbsp;|&nbsp;
-  Elevated flood risk: Mathare, Mukuru, Kibera &nbsp;|&nbsp;
-  <span style="color:#FCA5A5;">Replace this banner with live KMD API data (see HANDOFF.md §6.1)</span>
-</div>
-""", unsafe_allow_html=True)
+# ── Alert banner ──────────────────────────────────────────────────────────────
+# Replace with live KMD API call when available — see README § 6.1
+ALERT_ACTIVE  = True
+ALERT_LEVEL   = "HIGH"
+ALERT_MESSAGE = "Long-rains season active (April–June). Mathare and Mukuru zones on elevated watch. Drainage clearance operations reported incomplete in 7 sub-wards."
 
-# ── Header ─────────────────────────────────────────────────────
+if ALERT_ACTIVE:
+    color = {"HIGH": "#FF6B35", "CRITICAL": "#FF3333", "WATCH": "#FFB347"}.get(ALERT_LEVEL, "#FF6B35")
+    st.markdown(f"""
+    <div style="background:{color}22;border-left:4px solid {color};padding:12px 16px;
+                border-radius:4px;margin-bottom:16px;">
+      <span style="color:{color};font-weight:700">⚠ FLOOD ALERT — {ALERT_LEVEL}</span>
+      <span style="color:#E8E8E8;margin-left:12px">{ALERT_MESSAGE}</span>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ── Header ────────────────────────────────────────────────────────────────────
 st.markdown("# 🌊 FloodWatch NBI")
 st.markdown(
-    "**Urban flood resilience intelligence for Nairobi** — "
-    "incident tracking, policy accountability, city benchmarking."
+    "Urban flood resilience intelligence for Nairobi. "
+    "Tracking incidents, policy accountability, and the enforcement gap."
 )
-st.caption(
-    "⚠️ DEMO DATA · Figures are illustrative samples. "
-    "Production data: NCC incident reports · NDOC · Kenya Red Cross."
+st.markdown(
+    "<small style='color:#888'>⚠️ DEMO DATA — representative samples only. "
+    "See sidebar for navigation and README for real data sources.</small>",
+    unsafe_allow_html=True,
 )
 st.divider()
 
-# ── KPI row ────────────────────────────────────────────────────
-total_deaths     = int(df["deaths"].sum())
-total_displaced  = int(df["displaced"].sum())
-total_damage     = df["infra_damage_ksh_m"].sum()
-avg_response     = df["response_days"].mean()
-enforced_pct     = df["policy_enforced"].mean() * 100
-policy_gap_pct   = (
-    df[df["policy_existed"] & ~df["policy_enforced"]].shape[0] / len(df) * 100
-)
+# ── KPI row ───────────────────────────────────────────────────────────────────
+total_deaths     = int(incidents["deaths"].sum())
+total_displaced  = int(incidents["displaced"].sum())
+total_damage_ksh = incidents["infra_damage_ksh_m"].sum()
+critical_count   = len(incidents[incidents["severity"] == "Critical"])
+policy_gap       = incidents["policy_existed"].sum() - incidents["policy_enforced"].sum()
+avg_response     = incidents["response_days"].mean()
 
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Deaths (sample)",       f"{total_deaths}",         delta=None)
-col2.metric("Displaced (sample)",    f"{total_displaced:,}",    delta=None)
-col3.metric("Damage (KSh M)",        f"{total_damage:,.0f}",    delta=None)
-col4.metric("Avg Response (days)",   f"{avg_response:.1f}",     delta=None)
-col5.metric("Policy Enforced",       f"{enforced_pct:.0f}%",
-            delta=f"-{100-enforced_pct:.0f}% gap", delta_color="inverse")
-col6.metric("Incidents sampled",     f"{len(df)}",              delta=None)
+# Policy-level KPIs
+total_policies   = len(policies)
+stalled_or_not   = len(policies[policies["status"].isin(["Stalled","Not Enforced","Not Started","Draft Only"])])
+lives_at_risk    = policies[policies["status"] != "Completed"]["lives_saved_estimate"].sum()
+budget_allocated = policies["budget_allocated_ksh_m"].sum()
+budget_utilized  = (policies["budget_allocated_ksh_m"] * policies["budget_utilized_pct"] / 100).sum()
+budget_idle_pct  = round((1 - budget_utilized / budget_allocated) * 100, 1) if budget_allocated else 0
+
+col1, col2, col3, col4, col5 = st.columns(5)
+col1.metric("💀 Deaths (sampled)", f"{total_deaths:,}", help="Deaths across 15 sampled incidents")
+col2.metric("🏠 Displaced (sampled)", f"{total_displaced:,}", help="Persons displaced across sampled incidents")
+col3.metric("⚡ Critical Incidents", critical_count, help="Severity = Critical")
+col4.metric("❌ Enforcement Gap", int(policy_gap), help="Incidents where policy existed but was not enforced")
+col5.metric("⏱ Avg Response (days)", f"{avg_response:.1f}", help="Days to formal response from incident")
 
 st.divider()
 
-# ── Enforcement gap headline ────────────────────────────────────
-col_a, col_b = st.columns([3, 2])
-with col_a:
-    st.markdown("### The Enforcement Gap")
+col6, col7, col8, col9 = st.columns(4)
+col6.metric("📋 Policies Tracked", total_policies)
+col7.metric("🚫 Stalled / Not Enforced", stalled_or_not,
+            delta=f"{round(stalled_or_not/total_policies*100)}% of policies",
+            delta_color="inverse")
+col8.metric("❤ Lives at Risk (policy gap)", f"{lives_at_risk:,}",
+            help="Estimated lives saved if stalled policies were fully implemented")
+col9.metric("💰 Budget Idle", f"{budget_idle_pct}%",
+            help=f"KSh {budget_allocated - budget_utilized:.0f}M of KSh {budget_allocated:.0f}M unspent",
+            delta_color="inverse")
+
+st.divider()
+
+# ── Navigation cards ──────────────────────────────────────────────────────────
+st.markdown("### Navigate")
+c1, c2, c3 = st.columns(3)
+with c1:
+    st.info("📍 **Incident Map**
+
+Interactive map of flood events with severity markers, riparian corridors, and risk heatmap.")
+with c2:
+    st.info("📊 **Impact Analysis**
+
+Zone breakdowns, seasonal patterns, and the enforcement gap visualised.")
+with c3:
+    st.info("📋 **Policy Tracker**
+
+Budget utilisation, blocking factors, and lives at risk from stalled policies.")
+
+c4, c5, c6 = st.columns(3)
+with c4:
+    st.info("🌍 **City Benchmarks**
+
+Radar and scatter comparison of Nairobi against Medellin, Rotterdam, Jakarta, Dhaka, Singapore.")
+with c5:
+    st.info("🔧 **Risk Calculator**
+
+Site-level composite flood risk score — test any location's vulnerability.")
+with c6:
+    st.info("📣 **Community Report**
+
+Submit a flood incident or infrastructure failure from the field.")
+
+# ── Sidebar ───────────────────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("## 🌊 FloodWatch NBI")
+    st.markdown("**v0.1.0 · DEMO DATA**")
+    st.divider()
+    st.markdown("### About")
     st.markdown(
-        "In **{pct:.0f}%** of sampled incidents, a relevant flood policy existed "
-        "but was **not being enforced** at the time of the event. "
-        "This is the core accountability failure this platform tracks.".format(
-            pct=policy_gap_pct
-        )
+        "Nairobi floods repeatedly. The policies to address this largely exist. "
+        "This platform makes the **enforcement gap** visible and measurable."
     )
-    st.plotly_chart(enforcement_gap_chart(df), use_container_width=True)
-
-with col_b:
-    st.markdown("### Timeline")
-    st.plotly_chart(flood_timeline_chart(df), use_container_width=True)
-
-st.divider()
-
-# ── Navigation guide ────────────────────────────────────────────
-st.markdown("### Explore")
-nav_cols = st.columns(3)
-pages = [
-    ("📍 Incident Map",       "pages/01 — Folium map with severity filters, riparian overlays, and incident log"),
-    ("📊 Impact Analysis",    "pages/02 — Zone breakdowns, seasonality, cause treemap, enforcement correlation"),
-    ("📋 Policy Tracker",     "pages/03 — 10 policies: status, budget gap, blocker taxonomy, lives at risk"),
-    ("🌍 City Benchmarks",    "pages/04 — Radar + scatter comparing Nairobi against Rotterdam, Medellin, Dhaka, Singapore, Jakarta"),
-    ("🔧 Risk Calculator",    "pages/05 — Site-level composite flood risk scorer with input sliders"),
-    ("📣 Community Report",   "pages/06 — Citizen flood incident submission form"),
-]
-for i, (title, desc) in enumerate(pages):
-    nav_cols[i % 3].info(f"**{title}**\n\n{desc}")
+    st.divider()
+    st.markdown("### Data")
+    st.markdown(f"- **{len(incidents)}** sampled incidents")
+    st.markdown(f"- **{len(policies)}** policies tracked")
+    st.markdown(f"- **{total_deaths}** deaths in sample")
+    st.markdown(f"- **{total_displaced:,}** displaced in sample")
+    st.divider()
+    st.markdown("### Design principle")
+    st.markdown(
+        "*The enforcement gap is the story. Every feature should connect back "
+        "to the distance between policy existence and policy implementation.*"
+    )
+    st.divider()
+    st.caption("Part of the [nairobi-stack](https://github.com/gabrielmahia/nairobi-stack) ecosystem")
+    st.caption("Maintained by [Gabriel Mahia](https://github.com/gabrielmahia)")
