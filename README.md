@@ -1,19 +1,20 @@
 # FloodWatch NBI
 
-**Urban flood resilience intelligence for Nairobi** — incident tracking, policy accountability, city benchmarking.
+**Urban flood resilience intelligence for Nairobi — incident tracking, policy accountability, city benchmarks.**
 
 [![CI](https://github.com/gabrielmahia/floodwatch-nbi/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielmahia/floodwatch-nbi/actions)
-[![Python](https://img.shields.io/badge/python-3.11%2B-blue)](#)
-[![Tests](https://img.shields.io/badge/tests-20%20passing-brightgreen)](#)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://floodwatch-nbi.streamlit.app)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](LICENSE)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.32%2B-red)](#)
 
-> DEMO DATA - All incident figures are illustrative samples.
-> Real data: NCC incident reports, NDOC, Kenya Red Cross.
+⚠️ **DEMO DATA** — All incident and policy records are representative samples drawn from public documentation. See § 12 for real data sources.
 
-Nairobi floods repeatedly. The policy instruments to address this largely exist.
-The problem is an **enforcement and accountability gap**, not a knowledge gap.
-This platform makes that gap visible and measurable.
+---
+
+## What this is
+
+Nairobi floods repeatedly. The policy instruments to address this largely exist. The problem is an **enforcement and accountability gap**, not a knowledge gap. This platform makes that gap visible and measurable.
+
+The design deliberately centres political economy over hydrology — tracking *who failed to act* and *what blocked them*, not just *where water went*.
 
 ---
 
@@ -26,7 +27,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-App runs at `http://localhost:8501`.
+Or deploy directly: [share.streamlit.io](https://share.streamlit.io) → New app → point to `app.py`.
 
 ---
 
@@ -34,74 +35,108 @@ App runs at `http://localhost:8501`.
 
 | Page | What it shows |
 |------|--------------|
-| Landing (`app.py`) | KPI summary, enforcement gap headline, active alert banner |
-| 01 Incident Map | Folium dark map, severity/zone/cause filters, heatmap toggle, incident log |
-| 02 Impact Analysis | Zone breakdowns, seasonality, cause treemap, enforcement gap detail |
-| 03 Policy Tracker | 10 policies: status donut, budget gap, blocker taxonomy, lives at risk |
-| 04 City Benchmarks | Radar + scatter: Nairobi vs Rotterdam, Medellin, Dhaka, Singapore, Jakarta |
-| 05 Risk Calculator | Site-level composite risk score with component breakdown |
-| 06 Community Report | Citizen incident submission form (stores to CSV, pending admin review) |
+| **Landing** | Alert banner, KPI summary, enforcement gap overview |
+| **Incident Map** | Folium dark map — severity markers, river corridors, risk heatmap |
+| **Impact Analysis** | Timeline, zone breakdowns, seasonal patterns, enforcement gap charts |
+| **Policy Tracker** | 10 policies — budget utilisation, blocking factors, lives at risk |
+| **City Benchmarks** | Radar + scatter: Nairobi vs Medellin, Rotterdam, Jakarta, Dhaka, Singapore |
+| **Risk Calculator** | Site-level composite flood risk scorer (0–100) |
+| **Community Report** | Citizen incident submission form with CSV persistence |
 
 ---
 
-## The enforcement gap
+## Risk calculator
 
-The central insight: in the sampled incidents, a relevant flood policy existed but was
-not being enforced in the majority of cases. This is not a data problem or a technical
-problem. It is a political economy problem — which is why this platform tracks
-*who failed to act* and *what blocked them*, not just *where water went*.
+Composite score formula (component weights):
+
+| Component | Weight | Notes |
+|-----------|--------|-------|
+| Population density | 25% | Per hectare, 0–500 normalised |
+| Drainage gap | 20% | (100 - coverage%) |
+| River proximity | 25% | 0–500m band |
+| Riparian violation | 15% | Non-compliant adds full weight |
+| Flat terrain | 10% | Slope < 10% |
+| Soil impermeability | 5% | Clay = 1.0, sandy = 0.0 |
+
+Weights are indicative. Calibrate against actual Nairobi hydrology data (JKUAT/UoN civil engineering partnership recommended).
 
 ---
 
-## Data schemas
+## Extension priorities
 
-See [HANDOFF.md](HANDOFF.md) for full column-level documentation of:
-- `data/incidents.csv` — 12 columns including `policy_existed` / `policy_enforced` pair
-- `data/policies.csv` — 10 policies with blocking factor taxonomy
-- `data/city_benchmarks.json` — 6-city resilience comparison dataset
+### 6.1 Real-time rainfall
+Replace the hardcoded alert banner with live KMD API or OpenWeatherMap data:
+```python
+def get_rainfall_alert():
+    # Call api.meteo.go.ke or OpenWeatherMap Nairobi basin
+    # Return: None | "watch" | "warning" | "emergency"
+    pass
+```
+
+### 6.2 WRMA river level alerts
+Add gauge data from Nairobi River, Mathare, Ngong, Athi. Threshold: gauge > 80% of flood stage = orange; > 100% = red.
+
+### 6.3 Ward-level choropleth
+Nairobi has 85 wards, each with a sitting MCA. Ward-level data makes political accountability concrete.
+GeoJSON: Kenya Open Data Portal, Humanitarian Data Exchange (HDX).
+
+### 6.4 Community report → map pipeline
+Close the loop: verified community reports appear on the incident map with a different marker style.
+
+### 6.5 SMS gateway for community reports
+Remove the web access barrier for Mathare/Kibera/Mukuru reporters:
+- Africa's Talking SMS API (free tier, Kenyan numbers)
+- Keyword protocol: `FLOOD [LOCATION] [SEVERITY]`
+- Uses [kenya-sms](https://github.com/gabrielmahia/kenya-sms) library
+
+### 6.6 Policy status notifications
+Add `last_updated` to policies.csv + subscriber email alerts when policy status changes.
+
+### 6.7 Developer impact assessment
+Connect risk calculator to NCC planning approval database — flag approved developments with high risk scores.
 
 ---
 
-## Extension roadmap
+## Data sources
 
-Priority order by impact-to-effort:
-
-1. **Real-time rainfall** — KMD API or OpenWeatherMap alert banner
-2. **WRMA river gauge alerts** — Mathare, Nairobi, Ngong, Athi thresholds
-3. **Ward-level choropleth** — 85 Nairobi wards mapped to sitting MCAs
-4. **Community report -> map pipeline** — close the submission-to-map loop
-5. **SMS gateway** — Africa's Talking inbound: `FLOOD [LOCATION] [SEVERITY]`
-6. **Policy changelog + email alerts** — SendGrid notifications on status regression
-7. **Developer impact assessment** — flag approved developments against risk scores
-
-Full implementation notes in [HANDOFF.md](HANDOFF.md).
+| Source | What it provides | Access |
+|--------|-----------------|--------|
+| Kenya Meteorological Department | Rainfall, forecasts | api.meteo.go.ke |
+| WRMA | River gauge levels | Email / open data |
+| Nairobi City County | Incident reports, drainage maps | FOIA / open data |
+| NDOC | Disaster declarations, response logs | Public reports |
+| Kenya Open Data Portal | Ward boundaries, census | opendata.go.ke |
+| HDX | Settlement boundaries, vulnerability | data.humdata.org |
+| UNHABITAT Nairobi | Informal settlement profiles | unhabitat.org |
+| Akiba Mashinani Trust | Mukuru-specific community data | Direct partnership |
 
 ---
 
 ## Design principles
 
-**The enforcement gap is the story.** Every feature should connect back to the
-distance between policy existence and implementation.
+**The enforcement gap is the story.** Every feature should connect back to the distance between policy existence and policy implementation.
 
-**Name the blockers, not just the outcomes.** Which actors, which decisions.
+**Name the blockers, not just the outcomes.** A chart showing flood deaths is less useful than a chart showing which decisions and which actors produced those deaths.
 
-**Community data supplements but does not replace structural analysis.**
-
-**The city comparison is diagnostic, not aspirational.** Rotterdam is the ceiling.
-Medellin is the relevant analogue. Dhaka is the warning.
+**Medellin is the analogue, not Rotterdam.** A messy, under-resourced city that made progress through political will and community ownership — not a wealthy country with 70 years of consensus.
 
 ---
 
-## Stack
+## Database migration path
 
-- Python 3.11+
-- Streamlit 1.32+
-- Plotly 5.18+
-- Folium 0.15+
-- streamlit-folium 0.18+
-- Pandas 2.0+
+Current: flat CSV files (works to ~500 community reports).
+Recommended migration: **Supabase** (PostgreSQL, free tier, row-level security).
+
+```python
+from supabase import create_client
+client = create_client(SUPABASE_URL, SUPABASE_KEY)
+incidents = client.table("incidents").select("*").execute().data
+```
+
+Store credentials in `.streamlit/secrets.toml`.
 
 ---
 
 *Part of the [nairobi-stack](https://github.com/gabrielmahia/nairobi-stack) East Africa engineering ecosystem.*
-*Maintained by [Gabriel Mahia](https://github.com/gabrielmahia). Kenya x USA.*
+*Inspired by OpenResilience Kenya, Rotterdam Delta Programme, 100 Resilient Cities.*
+*Maintained by [Gabriel Mahia](https://github.com/gabrielmahia). Kenya × USA.*
