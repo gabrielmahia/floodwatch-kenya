@@ -32,6 +32,12 @@ def load_incidents(city_id: str) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame()
     df = pd.read_csv(path, on_bad_lines='skip')
+    # Coerce numeric columns — guards against string bleed after CSV requoting
+    numeric_cols = ['deaths','displaced','infra_damage_ksh_m','response_days',
+                    'budget_allocated_ksh_m','budget_utilized_pct','lives_saved_estimate']
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     df["city_id"]   = city_id
     df["city_name"] = city["name"]
     df["county"]    = city["county"]
@@ -48,6 +54,12 @@ def load_policies(city_id: str) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame()
     df = pd.read_csv(path, on_bad_lines='skip')
+    # Coerce numeric columns — guards against string bleed after CSV requoting
+    numeric_cols = ['deaths','displaced','infra_damage_ksh_m','response_days',
+                    'budget_allocated_ksh_m','budget_utilized_pct','lives_saved_estimate']
+    for col in numeric_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
     df["city_id"]   = city_id
     df["city_name"] = city["name"]
     return df
