@@ -1,0 +1,176 @@
+{
+  "cities": [
+    {
+      "id": "nairobi",
+      "name": "Nairobi",
+      "county": "Nairobi City County",
+      "population_m": 4.9,
+      "status": "active",
+      "data_available": true,
+      "map_center": [
+        -1.2921,
+        36.8219
+      ],
+      "map_zoom": 12,
+      "flood_typology": "urban_drainage",
+      "typology_label": "Urban drainage failure + riparian encroachment",
+      "typology_description": "Flash flooding driven by inadequate stormwater infrastructure and systematic encroachment of 30m riparian reserves. Political economy: land value of riparian plots creates enforcement resistance. The enforcement gap is structural and politically sustained.",
+      "primary_rivers": [
+        "Nairobi River",
+        "Mathare River",
+        "Ngong River",
+        "Gitathuru River"
+      ],
+      "high_risk_zones": [
+        "Mathare",
+        "Kibera",
+        "Mukuru",
+        "Korogocho"
+      ],
+      "implementing_body": "Nairobi City County",
+      "key_policy_gap": "Riparian Reserve Enforcement",
+      "colour": "#FF6B35",
+      "incidents_file": "data/incidents.csv",
+      "policies_file": "data/policies.csv",
+      "resilience_score": 22,
+      "annual_rainfall_mm": 860,
+      "season_peak": "March-May (long rains), October-December (short rains)"
+    },
+    {
+      "id": "kisumu",
+      "name": "Kisumu",
+      "county": "Kisumu County",
+      "population_m": 0.6,
+      "status": "coming_soon",
+      "data_available": false,
+      "map_center": [
+        -0.1022,
+        34.7617
+      ],
+      "map_zoom": 12,
+      "flood_typology": "lake_basin",
+      "typology_label": "Lake Victoria basin rise + riverine overflow",
+      "typology_description": "Lake Victoria water levels rose ~1.5m between 2019-2021, inundating lakeside settlements. 2020 floods displaced over 100,000 people in Nyanza region. Early warning must key to lake gauge levels, not rainfall alone \u2014 a fundamentally different monitoring architecture than Nairobi.",
+      "primary_rivers": [
+        "Nyando River",
+        "Auji River",
+        "Kibos River"
+      ],
+      "high_risk_zones": [
+        "Nyalenda",
+        "Manyatta",
+        "Obunga",
+        "Kondele lakeside"
+      ],
+      "implementing_body": "Kisumu County Government + WRMA",
+      "key_policy_gap": "Lake Victoria buffer zone enforcement + Nyando basin management",
+      "colour": "#36A2EB",
+      "incidents_file": "data/kisumu/incidents.csv",
+      "policies_file": "data/kisumu/policies.csv",
+      "resilience_score": null,
+      "annual_rainfall_mm": 1200,
+      "season_peak": "March-May, elevated risk during La Nina years (lake level rise)"
+    },
+    {
+      "id": "mombasa",
+      "name": "Mombasa",
+      "county": "Mombasa County",
+      "population_m": 1.2,
+      "status": "coming_soon",
+      "data_available": false,
+      "map_center": [
+        -4.0435,
+        39.6682
+      ],
+      "map_zoom": 13,
+      "flood_typology": "coastal_urban",
+      "typology_label": "Coastal storm surge + urban drainage + Indian Ocean exposure",
+      "typology_description": "Compound flood risk: Indian Ocean storm surge, inadequate drainage in low-lying areas, and tidal creek encroachment. IPCC projects 0.3-0.6m sea level rise by 2100, permanently inundating parts of Mombasa Island. Mangrove destruction has removed the natural surge buffer. Requires coastal engineering responses distinct from upcountry approaches.",
+      "primary_rivers": [
+        "Tudor Creek",
+        "Portreitz Creek",
+        "Mwache River"
+      ],
+      "high_risk_zones": [
+        "Mishomoroni",
+        "Likoni",
+        "Kisauni lowlands",
+        "Mombasa Island south"
+      ],
+      "implementing_body": "Mombasa County Government + Kenya Ports Authority + NEMA",
+      "key_policy_gap": "Coastal setback enforcement + mangrove protection",
+      "colour": "#4BC0C0",
+      "incidents_file": "data/mombasa/incidents.csv",
+      "policies_file": "data/mombasa/policies.csv",
+      "resilience_score": null,
+      "annual_rainfall_mm": 1050,
+      "season_peak": "April-June, compounded by April-May Indian Ocean swells"
+    },
+    {
+      "id": "nakuru",
+      "name": "Nakuru",
+      "county": "Nakuru County",
+      "population_m": 0.57,
+      "status": "coming_soon",
+      "data_available": false,
+      "map_center": [
+        -0.3031,
+        36.08
+      ],
+      "map_zoom": 12,
+      "flood_typology": "endorheic_lake",
+      "typology_label": "Endorheic lake level rise \u2014 no natural outlet",
+      "typology_description": "Lake Nakuru rose approximately 10 metres between 2013-2023, inundating the KWS buffer zone and displacing lakeside communities. As an endorheic basin with no river outlet, water only leaves through evaporation. Conventional flood management is inapplicable. The response must centre on managed retreat and permanent buffer zone establishment \u2014 a policy that requires political will to deliver.",
+      "primary_rivers": [
+        "Njoro River (inflow)",
+        "Makalia River (inflow)",
+        "Enderit River (inflow)"
+      ],
+      "high_risk_zones": [
+        "Flamingo estate",
+        "KWS buffer zone",
+        "Lanet road corridor"
+      ],
+      "implementing_body": "Nakuru County Government + Kenya Wildlife Service + WRMA",
+      "key_policy_gap": "Endorheic basin management framework + managed retreat policy",
+      "colour": "#FF9F40",
+      "incidents_file": "data/nakuru/incidents.csv",
+      "policies_file": "data/nakuru/policies.csv",
+      "resilience_score": null,
+      "annual_rainfall_mm": 980,
+      "season_peak": "Cumulative lake level rise \u2014 not seasonal. La Nina years are highest risk."
+    },
+    {
+      "id": "garissa",
+      "name": "Garissa",
+      "county": "Garissa County",
+      "population_m": 0.37,
+      "status": "coming_soon",
+      "data_available": false,
+      "map_center": [
+        -0.4532,
+        39.6461
+      ],
+      "map_zoom": 12,
+      "flood_typology": "riverine_pastoral",
+      "typology_label": "Tana River riverine flooding \u2014 pastoral communities, seasonal displacement",
+      "typology_description": "The Tana River \u2014 fed by Mount Kenya and Aberdare rainfall \u2014 floods Garissa and surrounding pastoral areas seasonally, with major events in 2020 and 2023. Flood-affected communities are often the same communities dependent on the Tana for livestock water. Last-mile early warning to dispersed pastoral settlements is the critical unsolved gap. Tana Integrated Water Resources Management Project remains incomplete after 15 years.",
+      "primary_rivers": [
+        "Tana River"
+      ],
+      "high_risk_zones": [
+        "Garissa town riverside",
+        "Bura irrigation scheme",
+        "Hola lowlands"
+      ],
+      "implementing_body": "Garissa County Government + TANA Water Works + NDOC",
+      "key_policy_gap": "Tana River basin management + last-mile SMS early warning for pastoral communities",
+      "colour": "#9966FF",
+      "incidents_file": "data/garissa/incidents.csv",
+      "policies_file": "data/garissa/policies.csv",
+      "resilience_score": null,
+      "annual_rainfall_mm": 340,
+      "season_peak": "Driven by upstream Mt Kenya/Aberdare rainfall \u2014 not local. Peak: April-May, November."
+    }
+  ]
+}
