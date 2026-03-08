@@ -205,17 +205,31 @@ def budget_gap_chart(df: pd.DataFrame) -> go.Figure:
 def blocker_treemap(df: pd.DataFrame) -> go.Figure:
     """Treemap of blocking factors, sized by lives at risk."""
     df = df[df["status"] != "Completed"].copy()
-    short = df["blocking_factor"].str.split(" and ").str[0].str.split(",").str[0].str[:40]
-    fig = px.treemap(
-        df, path=[short], values="lives_saved_estimate",
-        color="lives_saved_estimate",
-        color_continuous_scale=[[0, "#1A1F2E"], [0.5, "#FF6B35"], [1, "#FF3333"]],
-        hover_data={"name": True, "blocking_factor": True},
-    )
-    fig.update_traces(textinfo="label+value")
-    return dark_layout(fig, "Blocking Factors — Lives at Risk (by estimated lives saved if resolved)", 400)
-
-
+    if df.empty:
+        return dark_layout(go.Figure(), "Blocking Factors", 300)
+    df["lives_saved_estimate"] = pd.to_numeric(
+        df["lives_saved_estimate"], errors="coerce"
+    ).fillna(1).clip(lower=1)  # treemap requires positive values
+    short = (df["blocking_factor"].astype(str)
+             .str.split(" and ").str[0]
+             .str.split(",").str[0]
+             .str[:40])
+    try:
+        fig = px.treemap(
+            df, path=[short], values="lives_saved_estimate",
+            color="lives_saved_estimate",
+            color_continuous_scale=["#1A1F2E", "#FF6B35", "#FF3333"],
+        )
+    except Exception:
+        agg = df.copy()
+        agg["blocker_short"] = short
+        agg = agg.groupby("blocker_short")["lives_saved_estimate"].sum().reset_index()
+        agg = agg.sort_values("lives_saved_estimate", ascending=True)
+        fig = px.bar(agg, x="lives_saved_estimate", y="blocker_short", orientation="h",
+                     color="lives_saved_estimate",
+                     color_continuous_scale=["#1A1F2E","#FF6B35","#FF3333"],
+                     labels={"lives_saved_estimate": "Lives at risk", "blocker_short": "Blocker"})
+    return dark_layout(fig, "Blocking Factors — Lives at Risk", 400)
 def resilience_radar(cities: list[dict]) -> go.Figure:
     """Polar radar comparing resilience dimensions across cities."""
     dimensions = [
