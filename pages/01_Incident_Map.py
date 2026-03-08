@@ -1,85 +1,56 @@
-"""FloodWatch NBI - Page 01: Incident Map."""
-from pathlib import Path
-import pandas as pd
+"""Page 1 — Incident Map: Folium map with filters, incident log table."""
 import streamlit as st
+import pandas as pd
 from streamlit_folium import st_folium
 from utils.map_utils import build_incident_map, build_risk_heatmap
 
-st.set_page_config(page_title="Incident Map - FloodWatch NBI", page_icon="map", layout="wide")
-st.title("Incident Map")
-st.caption("DEMO DATA - illustrative sample. Blue lines = approximate riparian corridors (not WRMA-verified GIS).")
-
-ROOT = Path(__file__).parent.parent
+st.set_page_config(page_title="Incident Map · FloodWatch NBI", page_icon="📍", layout="wide")
+st.markdown("# 📍 Incident Map")
+st.caption("⚠️ DEMO DATA — 15 sampled incidents. Toggle between marker map and risk heatmap.")
 
 @st.cache_data
-def load():
-    df = pd.read_csv(ROOT / "data" / "incidents.csv", parse_dates=["date"])
-    df["policy_existed"]  = df["policy_existed"].astype(bool)
-    df["policy_enforced"] = df["policy_enforced"].astype(bool)
-    return df
-
+def load(): return pd.read_csv("data/incidents.csv")
 df = load()
 
 with st.sidebar:
-    st.header("Filters")
-    severities = st.multiselect("Severity",
-        options=["Critical", "High", "Medium", "Low"],
-        default=["Critical", "High", "Medium", "Low"])
-    zones = st.multiselect("Zone",
-        options=sorted(df["zone"].unique()),
-        default=list(df["zone"].unique()))
-    causes = st.multiselect("Cause",
-        options=sorted(df["cause"].unique()),
-        default=list(df["cause"].unique()))
-    enforcement_filter = st.selectbox("Policy enforcement status",
-        options=["All", "Policy existed, not enforced", "Policy enforced", "No policy"])
-    map_mode = st.radio("Map type", ["Incident markers", "Risk heatmap"])
+    st.markdown("## Filters")
+    severities = st.multiselect("Severity", ["Critical","High","Medium","Low"],
+                                default=["Critical","High","Medium","Low"])
+    zones = st.multiselect("Zone", sorted(df["zone"].unique()), default=list(df["zone"].unique()))
+    show_enforced = st.selectbox("Policy enforcement", ["All","Enforced only","Not enforced only"])
+    map_mode = st.radio("Map mode", ["Incident markers", "Risk heatmap"])
 
-filtered = df[
-    df["severity"].isin(severities) &
-    df["zone"].isin(zones) &
-    df["cause"].isin(causes)
-]
-if enforcement_filter == "Policy existed, not enforced":
-    filtered = filtered[filtered["policy_existed"] & ~filtered["policy_enforced"]]
-elif enforcement_filter == "Policy enforced":
-    filtered = filtered[filtered["policy_enforced"]]
-elif enforcement_filter == "No policy":
-    filtered = filtered[~filtered["policy_existed"]]
+filt = df[df["severity"].isin(severities) & df["zone"].isin(zones)]
+if show_enforced == "Enforced only":
+    filt = filt[filt["policy_enforced"] == True]
+elif show_enforced == "Not enforced only":
+    filt = filt[filt["policy_enforced"] != True]
 
-st.markdown(f"**{len(filtered)} incident(s)** matching filters")
+col1, col2, col3, col4 = st.columns(4)
+col1.metric("Incidents shown", len(filt))
+col2.metric("Deaths", int(filt["deaths"].sum()))
+col3.metric("Displaced", f"{int(filt['displaced'].sum()):,}")
+col4.metric("Enforcement gap",
+    int((filt["policy_existed"] == True).sum() - (filt["policy_enforced"] == True).sum()))
 
-if len(filtered) == 0:
-    st.warning("No incidents match the current filters.")
+st.divider()
+
+if len(filt) == 0:
+    st.warning("No incidents match current filters.")
 else:
-    m = build_risk_heatmap(filtered) if map_mode == "Risk heatmap" else build_incident_map(filtered)
-    st_folium(m, width="100%", height=520)
+    m = build_incident_map(filt) if map_mode == "Incident markers" else build_risk_heatmap(filt)
+    st_folium(m, width="100%", height=520, returned_objects=[])
 
 st.divider()
 st.markdown("### Incident Log")
-display = filtered[[
-    "date", "location", "zone", "severity", "deaths",
-    "displaced", "cause", "infra_damage_ksh_m", "response_days",
-    "policy_existed", "policy_enforced",
-]].copy()
-display["date"] = display["date"].dt.strftime("%Y-%m-%d")
-display = display.rename(columns={
-    "infra_damage_ksh_m": "damage_ksh_m",
-    "policy_existed": "policy?",
-    "policy_enforced": "enforced?",
-})
-
-def colour_severity(val):
-    c = {"Critical": "#EF4444", "High": "#F97316", "Medium": "#EAB308", "Low": "#22C55E"}
-    return f"color: {c.get(val, '')}"
-
+display_cols = ["date","location","zone","severity","deaths","displaced","cause",
+                "infra_damage_ksh_m","response_days","policy_existed","policy_enforced"]
 st.dataframe(
-    display.style.applymap(colour_severity, subset=["severity"]),
-    use_container_width=True, height=380)
-
-st.divider()
-c1, c2, c3, c4 = st.columns(4)
-c1.metric("Deaths",         int(filtered["deaths"].sum()))
-c2.metric("Displaced",      f"{int(filtered['displaced'].sum()):,}")
-c3.metric("Damage (KSh M)", f"{filtered['infra_damage_ksh_m'].sum():,.0f}")
-c4.metric("Avg response",   f"{filtered['response_days'].mean():.1f} days")
+    filt[display_cols].sort_values("date", ascending=False).reset_index(drop=True),
+    use_container_width=True,
+    column_config={
+        "infra_damage_ksh_m": st.column_config.NumberColumn("Damage (KSh M)", format="%.1f"),
+        "policy_existed":     st.column_config.CheckboxColumn("Policy existed"),
+        "policy_enforced":    st.column_config.CheckboxColumn("Policy enforced"),
+    }
+)
