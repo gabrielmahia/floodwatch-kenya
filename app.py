@@ -18,6 +18,24 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+    [data-testid="column"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 100% !important;
+    }
+    [data-testid="stMetricValue"] { font-size: 1.4rem !important; }
+    [data-testid="stPlotlyChart"] > div { width: 100% !important; }
+    iframe { width: 100% !important; max-width: 100% !important; }
+    [data-testid="stDataFrame"] { overflow-x: auto !important; }
+    section[data-testid="stSidebar"] { min-width: 200px !important; }
+    .stButton > button { width: 100% !important; min-height: 48px !important; }
+}
+</style>
+""", unsafe_allow_html=True)
+
 @st.cache_data
 def get_all_data():
     incidents = load_all_incidents()
@@ -66,13 +84,26 @@ budget_alloc     = pd.to_numeric(policies["budget_allocated_ksh_m"], errors="coe
 budget_used      = (pd.to_numeric(policies["budget_allocated_ksh_m"], errors="coerce").fillna(0) * pd.to_numeric(policies["budget_utilized_pct"], errors="coerce").fillna(0) / 100).sum() if not policies.empty else 0
 budget_idle_pct  = round((1 - budget_used / budget_alloc) * 100, 1) if budget_alloc else 0
 
-col1, col2, col3, col4, col5, col6 = st.columns(6)
-col1.metric("Cities tracked", len(cities))
-col2.metric("Incidents (sampled)", total_incidents)
-col3.metric("Deaths (sampled)", f"{total_deaths:,}")
-col4.metric("Displaced (sampled)", f"{total_displaced:,}")
-col5.metric("Enforcement gap", policy_gap, help="Incidents where policy existed but not enforced")
-col6.metric("Lives at risk (policy gap)", f"{lives_at_risk:,}")
+kpi_items = [
+    ("🏙️ Cities tracked", str(len(cities)), "#4CAF50"),
+    ("📋 Incidents", str(total_incidents), "#FF6B35"),
+    ("💀 Deaths", f"{total_deaths:,}", "#FF3333"),
+    ("🏠 Displaced", f"{total_displaced:,}", "#FF6B35"),
+    ("⚠️ Enforcement gap", str(policy_gap), "#FF3333"),
+    ("🔴 Lives at risk", f"{lives_at_risk:,}", "#FF3333"),
+]
+kpi_html = '<div style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.5rem;">'
+for label, value, color in kpi_items:
+    kpi_html += (
+        f'<div style="flex:1 1 120px;min-width:110px;background:#1A1F2E;'
+        f'border-left:3px solid {color};border-radius:6px;padding:0.7rem 0.9rem;">'
+        f'<div style="font-size:0.68rem;text-transform:uppercase;color:#aaa;'
+        f'letter-spacing:0.05em;margin-bottom:0.2rem;">{label}</div>'
+        f'<div style="font-size:1.3rem;font-weight:800;color:#E8E8E8;">{value}</div>'
+        f'</div>'
+    )
+kpi_html += '</div>'
+st.markdown(kpi_html, unsafe_allow_html=True)
 
 st.divider()
 

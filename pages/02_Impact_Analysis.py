@@ -8,6 +8,19 @@ from utils.charts import (flood_timeline_chart, zone_impact_bar,
                            enforcement_gap_chart, dark_layout)
 
 st.set_page_config(page_title="Impact Analysis · FloodWatch Kenya", page_icon="📊", layout="wide")
+
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+    [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; min-width: 100% !important; }
+    [data-testid="stMetricValue"] { font-size: 1.3rem !important; }
+    [data-testid="stDataFrame"] { overflow-x: auto !important; }
+    iframe { width: 100% !important; max-width: 100% !important; }
+    .stButton > button { width: 100% !important; min-height: 48px !important; }
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown("# 📊 Impact Analysis")
 st.caption("Sources: NDOC situation reports · NCC audits · Kenya Red Cross · WRMA · NEMA enforcement records")
 

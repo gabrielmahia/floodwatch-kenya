@@ -6,6 +6,19 @@ from utils.charts import resilience_radar, deaths_per_event_scatter, dark_layout
 import plotly.express as px
 
 st.set_page_config(page_title="City Benchmarks · FloodWatch Kenya", page_icon="🌍", layout="wide")
+
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+    [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; min-width: 100% !important; }
+    [data-testid="stMetricValue"] { font-size: 1.3rem !important; }
+    [data-testid="stDataFrame"] { overflow-x: auto !important; }
+    iframe { width: 100% !important; max-width: 100% !important; }
+    .stButton > button { width: 100% !important; min-height: 48px !important; }
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.markdown("# 🌍 City Benchmarks")
 st.markdown(
     "Kenyan cities measured against global flood resilience comparators. "
