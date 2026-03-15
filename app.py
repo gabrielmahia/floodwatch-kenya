@@ -59,8 +59,12 @@ cities = active_cities()
 
 # ── Alert banner ──────────────────────────────────────────────────────────────
 ALERT_ACTIVE  = True
-ALERT_LEVEL   = "HIGH"
-ALERT_MESSAGE = "Long-rains season active (March–June). Garissa Tana River watch active. Budalangi Nzoia River pre-flood conditions. Nairobi and Kisumu drainage clearance operations underway."
+ALERT_LEVEL   = "CRITICAL"
+ALERT_MESSAGE = ("March 2026 floods — 62 deaths confirmed nationally, 33 in Nairobi alone. "
+                 "Second flooding event in 7 days (March 6 and March 15). "
+                 "Nairobi River overtopped in Grogan, Eastleigh, Mathare, Mukuru. "
+                 "37 Nairobi neighbourhoods officially designated flood-prone by Interior Ministry (March 15). "
+                 "KMD forecasts continued heavy rainfall through May. Evacuate riparian zones.")
 
 if ALERT_ACTIVE:
     color = {"HIGH": "#FF6B35", "CRITICAL": "#FF3333", "WATCH": "#FFB347"}.get(ALERT_LEVEL, "#FF6B35")
@@ -265,4 +269,4 @@ with st.sidebar:
     st.markdown("### Design principle")
     st.markdown("*The enforcement gap is the story. Every feature connects back to the distance between policy existence and implementation.*")
     st.divider()
-    st.caption("Part of the [nairobi-stack](https://github.com/gabrielmahia/nairobi-stack) ecosystem")
+    st.caption("Part of the [gabrielmahia](https://github.com/gabrielmahia) civic tech portfolio")
