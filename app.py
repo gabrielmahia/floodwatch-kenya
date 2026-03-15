@@ -82,6 +82,16 @@ st.markdown(
     f"Urban flood resilience intelligence across **{len(cities)} Kenyan cities**. "
     "Tracking incidents, policy accountability, and the enforcement gap."
 )
+st.warning(
+    "📋 **SEED DATA — Illustrative only.** "
+    "Incident figures (deaths, displaced) are representative estimates compiled from "
+    "published NDOC/Red Cross event ranges — they are not extracted from specific "
+    "situation reports and should not be cited as verified statistics. "
+    "The enforcement gap and policy patterns are the analytically meaningful signal. "
+    "Verify individual incident figures at [reliefweb.int](https://reliefweb.int) "
+    "or [ndoc.go.ke](https://ndoc.go.ke) before citing.",
+    icon=None
+)
 
 st.divider()
 
