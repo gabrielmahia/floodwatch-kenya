@@ -3,6 +3,7 @@
 **Urban flood resilience intelligence for Kenya — 25 cities, national enforcement gap tracking.**
 
 [![Live App](https://img.shields.io/badge/Live%20App-floodwatch--kenya.streamlit.app-FF4B4B?logo=streamlit)](https://floodwatch-kenya.streamlit.app)
+[![Live Data](https://img.shields.io/badge/Live%20Data-Open-Meteo%20%C2%B7%20NDMA-00b4d8)](#floodwatch-kenya)
 [![CI](https://github.com/gabrielmahia/floodwatch-kenya/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielmahia/floodwatch-kenya/actions)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](LICENSE)
 
