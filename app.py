@@ -28,7 +28,7 @@ _st_banner.info(
 del _st_banner
 
 st.set_page_config(
-    page_title="Mafuriko — Flood Intelligence Kenya",
+    page_title="FloodWatch Kenya — Flood Intelligence",
     page_icon="🌊",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -49,6 +49,23 @@ st.markdown("""
     section[data-testid="stSidebar"] { min-width: 200px !important; }
     .stButton > button { width: 100% !important; min-height: 48px !important; }
 }
+
+    /* Metric text — explicit colours, light + dark (both OS pref and Streamlit toggle) */
+    [data-testid="stMetricLabel"]  { color: #444444 !important; font-size: 0.8rem !important; }
+    [data-testid="stMetricValue"]  { color: #111111 !important; font-weight: 700 !important; }
+    [data-testid="stMetricDelta"]  { color: #333333 !important; }
+    @media (prefers-color-scheme: dark) {
+        [data-testid="stMetricLabel"] { color: #aaaaaa !important; }
+        [data-testid="stMetricValue"] { color: #f0f0f0 !important; }
+        [data-testid="stMetricDelta"] { color: #cccccc !important; }
+    }
+    [data-theme="dark"] [data-testid="stMetricLabel"],
+    .stApp[data-theme="dark"] [data-testid="stMetricLabel"] { color: #aaaaaa !important; }
+    [data-theme="dark"] [data-testid="stMetricValue"],
+    .stApp[data-theme="dark"] [data-testid="stMetricValue"] { color: #f0f0f0 !important; }
+    [data-theme="dark"] [data-testid="stMetricDelta"],
+    .stApp[data-theme="dark"] [data-testid="stMetricDelta"] { color: #cccccc !important; }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -135,7 +152,7 @@ if ALERT_ACTIVE:
     """, unsafe_allow_html=True)
 
 # ── Header ────────────────────────────────────────────────────────────────────
-st.markdown("# 🌊 Mafuriko — Flood Intelligence Kenya")
+st.markdown("# 🌊 FloodWatch Kenya — Flood Intelligence")
 st.markdown(
     f"Urban flood resilience intelligence across **{len(cities)} Kenyan cities**. "
     "Tracking incidents, policy accountability, and the enforcement gap."
@@ -320,7 +337,7 @@ if not incidents.empty:
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown("## 🌊 Mafuriko — Flood Intelligence Kenya")
+    st.markdown("## 🌊 FloodWatch Kenya — Flood Intelligence")
     st.markdown("**v2.0.0**")
     st.divider()
     st.markdown(f"**{len(cities)} cities** · **{total_incidents} incidents** · **{total_policies} policies**")

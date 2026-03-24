@@ -1,4 +1,4 @@
-# 🌊 Mafuriko — Flood Risk Intelligence Kenya
+# 🌊 FloodWatch Kenya — Flood Risk Intelligence Kenya
 
 **Urban flood resilience intelligence for Kenya — 25 cities, national enforcement gap tracking.**
 
@@ -7,7 +7,7 @@
 [![CI](https://github.com/gabrielmahia/floodwatch-kenya/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielmahia/floodwatch-kenya/actions)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](LICENSE)
 
-> **Mafuriko** /mɑːfuːɾikɔ/ — *Kiswahili*: floods, inundation.
+> **FloodWatch Kenya** /mɑːfuːɾikɔ/ — *Kiswahili*: floods, inundation.
 
 ⚠️ **DEMO DATA** — All records are representative samples. See § Real Data Sources for authoritative datasets.
 
@@ -155,7 +155,7 @@ Part of a suite of civic and community tools built by [Gabriel Mahia](https://gi
 
 | App | What it does |
 |-----|-------------|
-| [🌊 Mafuriko](https://floodwatch-kenya.streamlit.app) | Flood risk & policy enforcement tracker — Kenya |
+| [🌊 FloodWatch Kenya](https://floodwatch-kenya.streamlit.app) | Flood risk & policy enforcement tracker — Kenya |
 | [💧 WapiMaji](https://wapimaji.streamlit.app) | Water stress & drought intelligence — 47 counties |
 | [🏛️ Macho ya Wananchi](https://macho-ya-wananchi.streamlit.app) | MP voting records, CDF spending, bill tracker |
 | [🌾 JuaMazao](https://juamazao.streamlit.app) | Live food price intelligence for smallholders |
