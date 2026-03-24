@@ -355,3 +355,14 @@ with st.sidebar:
     st.markdown("*The enforcement gap is the story. Every feature connects back to the distance between policy existence and implementation.*")
     st.divider()
     st.caption("Part of the [gabrielmahia](https://github.com/gabrielmahia) civic tech portfolio")
+# -- Feedback sidebar ---------------------------------------------------------
+with st.sidebar:
+    st.markdown("---")
+    st.caption(
+        "**Useful? Found a bug?**\n\n"
+        "Email: contact@aikungfu.dev\n\n"
+        "GitHub: [Report issue](https://github.com/gabrielmahia/floodwatch-kenya/issues/new)\n\n"
+        "---\n"
+        "*Built by [Gabriel Mahia](https://aikungfu.dev)*\n\n"
+        "[Back to all tools](https://gabrielmahia.github.io)"
+    )
