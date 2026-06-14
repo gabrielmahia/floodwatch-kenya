@@ -1,0 +1,30 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/1.0.0/server.json",
+  "name": "floodwatch-kenya",
+  "version": "0.1.0",
+  "description": "FloodWatch Kenya \u2014 real-time flood risk monitoring using satellite data, NDMA alerts, and county-level vulnerability mapping. Civic resilience infrastructure.",
+  "license": "MIT",
+  "homepage": "https://gabrielmahia.github.io",
+  "author": {
+    "name": "Gabriel Mahia",
+    "email": "contact@aikungfu.dev",
+    "url": "https://gabrielmahia.github.io"
+  },
+  "keywords": [
+    "kenya",
+    "flood",
+    "disaster",
+    "ndma",
+    "satellite",
+    "climate",
+    "civic",
+    "africa"
+  ],
+  "categories": [
+    "Government Data",
+    "Weather Services"
+  ],
+  "links": {
+    "github": "https://github.com/gabrielmahia/floodwatch-kenya"
+  }
+}
