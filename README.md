@@ -3,7 +3,7 @@
 **Urban flood resilience intelligence for Kenya — 25 cities, national enforcement gap tracking.**
 
 [![Live App](https://img.shields.io/badge/Live%20App-floodwatch--kenya.streamlit.app-FF4B4B?logo=streamlit)](https://floodwatch-kenya.streamlit.app)
-[![Live Data](https://img.shields.io/badge/Live%20Data-Open-Meteo%20%C2%B7%20NDMA-00b4d8)](#floodwatch-kenya)
+[![Live Data](https://img.shields.io/badge/Live%20Data-Open--Meteo-00b4d8)](#floodwatch-kenya)
 [![CI](https://github.com/gabrielmahia/floodwatch-kenya/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielmahia/floodwatch-kenya/actions)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](LICENSE)
 
@@ -112,7 +112,7 @@ Calibration partners needed: JKUAT, UoN Civil Engineering, WRMA, county engineer
 |--------|------|--------|
 | Kenya Meteorological Department | Rainfall, forecasts | api.meteo.go.ke |
 | Water Resources Authority | River gauges, basin data | wrma.go.ke |
-| NDMA | Drought/flood contingency data | ndma.go.ke |
+| NDMA | Drought/flood contingency data | ndma.go.ke (its feed returned HTTP 503 on 2026-10-27 and 2026-11-05; alerts appear only when it is up) |
 | Nairobi City County | Incident reports, drainage maps | FOIA / open data |
 | NDOC | Disaster declarations | Public reports |
 | Kenya Open Data Portal | Ward boundaries, census | opendata.go.ke |
