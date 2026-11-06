@@ -4,19 +4,27 @@ Landing page: national KPI summary, city coverage map, alert banner.
 
 Data compiled from NDOC situation reports, Kenya Red Cross field reports, NCC drainage audits, NEMA enforcement records, and county government documentation.
 """
-import streamlit as st
-import urllib.request
 import json
-import xml.etree.ElementTree as ET
 import re
+import urllib.request
+import xml.etree.ElementTree as ET
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from utils.data_loader import load_all_incidents, load_all_policies, load_cities, active_cities
-from utils.charts import dark_layout
 
 # ── Data provenance banner ───────────────────────────────────────────────────
 import streamlit as _st_banner
+import streamlit as st
+
+from utils.charts import dark_layout
+from utils.data_loader import (
+    active_cities,
+    load_all_incidents,
+    load_all_policies,
+    load_cities,
+)
+
 _st_banner.info(
     "📋 **Incident data** is compiled from NDOC situation reports, Kenya Red Cross "
     "field reports, NCC drainage audits, and NEMA enforcement records. "
@@ -95,7 +103,7 @@ def fetch_nairobi_weather():
             "source":         "Open-Meteo · open-meteo.com · updated hourly",
             "live":           True,
         }
-    except Exception:
+    except Exception:  # noqa: BLE001 - graceful fallback: the page keeps working when an outside source or optional file is unavailable
         return {"live": False}
 
 
@@ -120,7 +128,7 @@ def fetch_ndma_alerts():
                 items.append({"title": title, "link": link, "date": date,
                                "summary": desc, "category": cat})
         return items
-    except Exception:
+    except Exception:  # noqa: BLE001 - graceful fallback: the page keeps working when an outside source or optional file is unavailable
         return []
 
 @st.cache_data
@@ -246,13 +254,13 @@ with col_map:
             name=t_label,
             text=sub["name"],
             textposition="top center",
-            textfont=dict(size=10, color="white"),
-            marker=dict(
-                size=sub["size"],
-                color=t_color,
-                opacity=0.85,
-                line=dict(color="white", width=1),
-            ),
+            textfont={"size": 10, "color": "white"},
+            marker={
+                "size": sub["size"],
+                "color": t_color,
+                "opacity": 0.85,
+                "line": {"color": "white", "width": 1},
+            },
             customdata=sub[["county","total_incidents","total_deaths","total_displaced"]].values,
             hovertemplate=(
                 "<b>%{text}</b><br>%{customdata[0]}<br>"
@@ -262,23 +270,23 @@ with col_map:
             ),
         ))
     fig.update_layout(
-        geo=dict(
-            scope="africa",
-            center=dict(lat=-0.5, lon=37.5),
-            projection_scale=8,
-            showland=True, landcolor="#1A1F2E",
-            showocean=True, oceancolor="#0E1117",
-            showlakes=True, lakecolor="#1A2A3E",
-            showcountries=True, countrycolor="#444",
-            showframe=False,
-            bgcolor="#0E1117",
-        ),
+        geo={
+            "scope": "africa",
+            "center": {"lat": -0.5, "lon": 37.5},
+            "projection_scale": 8,
+            "showland": True, "landcolor": "#1A1F2E",
+            "showocean": True, "oceancolor": "#0E1117",
+            "showlakes": True, "lakecolor": "#1A2A3E",
+            "showcountries": True, "countrycolor": "#444",
+            "showframe": False,
+            "bgcolor": "#0E1117",
+        },
         paper_bgcolor="#0E1117",
-        font=dict(color="#E8E8E8"),
+        font={"color": "#E8E8E8"},
         height=500,
-        margin=dict(l=0,r=0,t=30,b=0),
-        legend=dict(orientation="h", yanchor="bottom", y=-0.08,
-                    bgcolor="rgba(0,0,0,0)"),
+        margin={"l": 0,"r": 0,"t": 30,"b": 0},
+        legend={"orientation": "h", "yanchor": "bottom", "y": -0.08,
+                    "bgcolor": "rgba(0,0,0,0)"},
     )
     st.plotly_chart(fig, use_container_width=True)
 

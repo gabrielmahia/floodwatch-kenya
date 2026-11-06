@@ -1,11 +1,16 @@
 """Page 2 — Impact Analysis: multi-city comparison and per-city deep dive."""
-import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from utils.data_loader import load_all_incidents, load_incidents, active_cities
-from utils.charts import (flood_timeline_chart, zone_impact_bar,
-                           enforcement_gap_chart, dark_layout)
+import streamlit as st
+
+from utils.charts import (
+    dark_layout,
+    enforcement_gap_chart,
+    flood_timeline_chart,
+    zone_impact_bar,
+)
+from utils.data_loader import active_cities, load_all_incidents, load_incidents
 
 st.set_page_config(page_title="Impact Analysis · FloodWatch Kenya", page_icon="📊", layout="wide")
 
