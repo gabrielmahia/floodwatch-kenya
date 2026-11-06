@@ -1,5 +1,6 @@
 """Page 5 — Risk Calculator: city-aware presets + composite flood risk scorer."""
 import streamlit as st
+
 from utils.charts import calculate_risk_score
 from utils.data_loader import active_cities
 
@@ -30,20 +31,20 @@ cities = active_cities()
 KNOWN_SITES = {
     "Custom (enter below)": None,
     # Tier 1
-    "Mathare Valley, Nairobi (critical)":     dict(population_density=480,drainage_coverage=12,distance_from_river_m=45, riparian_compliant=False,slope_pct=1.5,soil_permeability=0.25),
-    "Kibera, Nairobi (critical)":             dict(population_density=420,drainage_coverage=18,distance_from_river_m=80, riparian_compliant=False,slope_pct=2.0,soil_permeability=0.30),
-    "Garissa Township (critical)":            dict(population_density=180,drainage_coverage=15,distance_from_river_m=60, riparian_compliant=False,slope_pct=0.8,soil_permeability=0.20),
-    "Budalangi Central (critical)":           dict(population_density=240,drainage_coverage=10,distance_from_river_m=30, riparian_compliant=False,slope_pct=0.5,soil_permeability=0.22),
-    "Nyalenda, Kisumu (critical)":            dict(population_density=390,drainage_coverage=20,distance_from_river_m=50, riparian_compliant=False,slope_pct=1.2,soil_permeability=0.28),
-    "Likoni, Mombasa (critical)":             dict(population_density=320,drainage_coverage=25,distance_from_river_m=40, riparian_compliant=False,slope_pct=1.5,soil_permeability=0.35),
-    "Mandera Town (critical)":               dict(population_density=160,drainage_coverage=8, distance_from_river_m=35, riparian_compliant=False,slope_pct=0.6,soil_permeability=0.18),
+    "Mathare Valley, Nairobi (critical)":     {"population_density": 480,"drainage_coverage": 12,"distance_from_river_m": 45, "riparian_compliant": False,"slope_pct": 1.5,"soil_permeability": 0.25},
+    "Kibera, Nairobi (critical)":             {"population_density": 420,"drainage_coverage": 18,"distance_from_river_m": 80, "riparian_compliant": False,"slope_pct": 2.0,"soil_permeability": 0.30},
+    "Garissa Township (critical)":            {"population_density": 180,"drainage_coverage": 15,"distance_from_river_m": 60, "riparian_compliant": False,"slope_pct": 0.8,"soil_permeability": 0.20},
+    "Budalangi Central (critical)":           {"population_density": 240,"drainage_coverage": 10,"distance_from_river_m": 30, "riparian_compliant": False,"slope_pct": 0.5,"soil_permeability": 0.22},
+    "Nyalenda, Kisumu (critical)":            {"population_density": 390,"drainage_coverage": 20,"distance_from_river_m": 50, "riparian_compliant": False,"slope_pct": 1.2,"soil_permeability": 0.28},
+    "Likoni, Mombasa (critical)":             {"population_density": 320,"drainage_coverage": 25,"distance_from_river_m": 40, "riparian_compliant": False,"slope_pct": 1.5,"soil_permeability": 0.35},
+    "Mandera Town (critical)":               {"population_density": 160,"drainage_coverage": 8, "distance_from_river_m": 35, "riparian_compliant": False,"slope_pct": 0.6,"soil_permeability": 0.18},
     # Tier 2
-    "Rhonda, Nakuru (high)":                  dict(population_density=200,drainage_coverage=28,distance_from_river_m=180,riparian_compliant=False,slope_pct=3.0,soil_permeability=0.40),
-    "Langas, Eldoret (high)":                 dict(population_density=280,drainage_coverage=22,distance_from_river_m=90, riparian_compliant=False,slope_pct=2.5,soil_permeability=0.38),
-    "Kericho Central (high)":                 dict(population_density=150,drainage_coverage=35,distance_from_river_m=200,riparian_compliant=True, slope_pct=8.0,soil_permeability=0.45),
-    "Naivasha Kongoni (high)":               dict(population_density=130,drainage_coverage=30,distance_from_river_m=70, riparian_compliant=False,slope_pct=2.0,soil_permeability=0.42),
+    "Rhonda, Nakuru (high)":                  {"population_density": 200,"drainage_coverage": 28,"distance_from_river_m": 180,"riparian_compliant": False,"slope_pct": 3.0,"soil_permeability": 0.40},
+    "Langas, Eldoret (high)":                 {"population_density": 280,"drainage_coverage": 22,"distance_from_river_m": 90, "riparian_compliant": False,"slope_pct": 2.5,"soil_permeability": 0.38},
+    "Kericho Central (high)":                 {"population_density": 150,"drainage_coverage": 35,"distance_from_river_m": 200,"riparian_compliant": True, "slope_pct": 8.0,"soil_permeability": 0.45},
+    "Naivasha Kongoni (high)":               {"population_density": 130,"drainage_coverage": 30,"distance_from_river_m": 70, "riparian_compliant": False,"slope_pct": 2.0,"soil_permeability": 0.42},
     # Low risk reference
-    "Karen, Nairobi (low)":                   dict(population_density=12, drainage_coverage=78,distance_from_river_m=800,riparian_compliant=True, slope_pct=8.5,soil_permeability=0.72),
+    "Karen, Nairobi (low)":                   {"population_density": 12, "drainage_coverage": 78,"distance_from_river_m": 800,"riparian_compliant": True, "slope_pct": 8.5,"soil_permeability": 0.72},
 }
 
 with st.sidebar:

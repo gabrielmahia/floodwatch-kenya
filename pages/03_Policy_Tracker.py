@@ -1,9 +1,15 @@
 """Page 3 — Policy Tracker: multi-city, national policy accountability view."""
-import streamlit as st
 import pandas as pd
 import plotly.express as px
-from utils.data_loader import load_all_policies, load_policies, active_cities
-from utils.charts import policy_status_sunburst, budget_gap_chart, blocker_treemap, dark_layout
+import streamlit as st
+
+from utils.charts import (
+    blocker_treemap,
+    budget_gap_chart,
+    dark_layout,
+    policy_status_sunburst,
+)
+from utils.data_loader import active_cities, load_all_policies, load_policies
 
 st.set_page_config(page_title="Policy Tracker · FloodWatch Kenya", page_icon="📋", layout="wide")
 

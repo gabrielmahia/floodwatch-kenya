@@ -1,9 +1,11 @@
 """Page 4 — City Benchmarks: Kenya cities vs global resilience comparators."""
-import streamlit as st
 import json
+
 import pandas as pd
-from utils.charts import resilience_radar, deaths_per_event_scatter, dark_layout
 import plotly.express as px
+import streamlit as st
+
+from utils.charts import dark_layout, deaths_per_event_scatter, resilience_radar
 
 st.set_page_config(page_title="City Benchmarks · FloodWatch Kenya", page_icon="🌍", layout="wide")
 
@@ -48,7 +50,7 @@ with st.sidebar:
                                      default=[c["name"] for c in cities])
     selected = [c for c in cities if c["name"] in selected_names]
     st.divider()
-    for key,(icon,label) in STATUS_LABELS.items():
+    for (icon,label) in STATUS_LABELS.values():
         st.markdown(f"{icon} {label}")
     st.divider()
     st.markdown("**Design note:** The city benchmark is diagnostic, not aspirational. Medellin — messy, under-resourced, made progress through political will — is the actionable analogue for Nairobi.")

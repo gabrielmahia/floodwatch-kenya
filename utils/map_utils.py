@@ -1,8 +1,9 @@
 """Folium map builders for FloodWatch Kenya — multi-city aware."""
 from __future__ import annotations
+
 import folium
-from folium.plugins import HeatMap
 import pandas as pd
+from folium.plugins import HeatMap
 
 NAIROBI_CENTER = [-1.2921, 36.8219]
 KENYA_CENTER   = [-0.5, 37.5]
@@ -71,7 +72,7 @@ def build_incident_map(incidents_df: pd.DataFrame,
         popup_html = f"""
         <div style="font-family:sans-serif;min-width:220px;color:#111">
           <b style="font-size:14px">{row["location"]}</b>{city_str}<br>
-          <span style="color:#888">{row["date"] if hasattr(row["date"],"strftime") else row["date"]} · {row["zone"]}</span>
+          <span style="color:#888">{row["date"]} · {row["zone"]}</span>
           <hr style="margin:4px 0">
           <b>Severity:</b> {row["severity"]}<br>
           <b>Deaths:</b> {row["deaths"]} · <b>Displaced:</b> {int(row["displaced"]):,}<br>

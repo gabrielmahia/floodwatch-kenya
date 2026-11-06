@@ -1,8 +1,10 @@
 """Page 6 — Community Report: city-aware incident submission."""
-import streamlit as st
-import pandas as pd
 import os
 from datetime import date
+
+import pandas as pd
+import streamlit as st
+
 from utils.data_loader import active_cities
 
 st.set_page_config(page_title="Community Report · FloodWatch Kenya", page_icon="📣", layout="wide")
@@ -40,7 +42,7 @@ with tab1:
     with st.form("community_report"):
         c1,c2 = st.columns(2)
         with c1:
-            r_date     = st.date_input("Date of incident", value=date.today())
+            r_date     = st.date_input("Date of incident", value=date.today())  # noqa: DTZ011 - the local calendar date is intended here (form defaults and filters)
             r_city     = st.selectbox("City", city_names)
             r_location = st.text_input("Location (estate/street)", placeholder="e.g. Mathare Valley near school")
             r_severity = st.selectbox("Severity", ["Critical","High","Medium","Low"])

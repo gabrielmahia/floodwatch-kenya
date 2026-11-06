@@ -3,10 +3,16 @@ Page 1 — Incident Map
 Select any of the 25 Kenyan cities, filter by severity/zone/enforcement,
 toggle between marker map and risk heatmap.
 """
-import streamlit as st
 import pandas as pd
+import streamlit as st
 from streamlit_folium import st_folium
-from utils.data_loader import load_cities, load_incidents, load_all_incidents, active_cities
+
+from utils.data_loader import (
+    active_cities,
+    load_all_incidents,
+    load_cities,
+    load_incidents,
+)
 from utils.map_utils import build_incident_map, build_risk_heatmap
 
 st.set_page_config(page_title="Incident Map · FloodWatch Kenya", page_icon="📍", layout="wide")

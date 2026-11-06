@@ -1,21 +1,21 @@
 """Plotly figures and risk calculator for FloodWatch NBI."""
 from __future__ import annotations
+
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
-
 
 # ── Theme helper ──────────────────────────────────────────────────────────────
 
 def dark_layout(fig: go.Figure, title: str = "", height: int = 400) -> go.Figure:
     fig.update_layout(
-        title=dict(text=title, font=dict(size=16, color="#E8E8E8")),
+        title={"text": title, "font": {"size": 16, "color": "#E8E8E8"}},
         paper_bgcolor="#1A1F2E",
         plot_bgcolor="#1A1F2E",
-        font=dict(color="#E8E8E8"),
+        font={"color": "#E8E8E8"},
         height=height,
-        margin=dict(l=40, r=20, t=50, b=40),
-        legend=dict(bgcolor="rgba(0,0,0,0)", bordercolor="rgba(255,255,255,0.1)"),
+        margin={"l": 40, "r": 20, "t": 50, "b": 40},
+        legend={"bgcolor": "rgba(0,0,0,0)", "bordercolor": "rgba(255,255,255,0.1)"},
     )
     fig.update_xaxes(gridcolor="rgba(255,255,255,0.08)", zerolinecolor="rgba(255,255,255,0.15)")
     fig.update_yaxes(gridcolor="rgba(255,255,255,0.08)", zerolinecolor="rgba(255,255,255,0.15)")
@@ -107,8 +107,8 @@ def flood_timeline_chart(df: pd.DataFrame) -> go.Figure:
             x=sub["date"], y=sub["displaced"],
             mode="markers",
             name=severity,
-            marker=dict(size=sub["size"], color=color, opacity=0.8,
-                        line=dict(color="white", width=1)),
+            marker={"size": sub["size"], "color": color, "opacity": 0.8,
+                        "line": {"color": "white", "width": 1}},
             customdata=sub[["location", "deaths", "cause", "policy_enforced"]].values,
             hovertemplate=(
                 "<b>%{customdata[0]}</b><br>"
@@ -210,7 +210,7 @@ def blocker_treemap(df: pd.DataFrame) -> go.Figure:
     if blocked.empty:
         fig = go.Figure()
         fig.add_annotation(text="No unresolved blockers", showarrow=False,
-                           font=dict(color="#888", size=14))
+                           font={"color": "#888", "size": 14})
         return dark_layout(fig, "Blocking Factors — Lives at Risk", 250)
 
     blocked["lives_saved_estimate"] = pd.to_numeric(
@@ -283,18 +283,18 @@ def resilience_radar(cities: list[dict]) -> go.Figure:
         fig.add_trace(go.Scatterpolar(
             r=values, theta=labels + [labels[0]],
             fill="toself", name=city["name"],
-            line=dict(color=city.get("color", "#888")),
+            line={"color": city.get("color", "#888")},
             fillcolor=city.get("color", "#888"),
             opacity=0.25,
         ))
     fig.update_layout(
-        polar=dict(
-            bgcolor="#1A1F2E",
-            radialaxis=dict(visible=True, range=[0, 100],
-                            tickfont=dict(color="#888"), gridcolor="rgba(255,255,255,0.1)"),
-            angularaxis=dict(tickfont=dict(color="#E8E8E8"), gridcolor="rgba(255,255,255,0.1)"),
-        ),
-        legend=dict(orientation="h", yanchor="bottom", y=-0.25),
+        polar={
+            "bgcolor": "#1A1F2E",
+            "radialaxis": {"visible": True, "range": [0, 100],
+                            "tickfont": {"color": "#888"}, "gridcolor": "rgba(255,255,255,0.1)"},
+            "angularaxis": {"tickfont": {"color": "#E8E8E8"}, "gridcolor": "rgba(255,255,255,0.1)"},
+        },
+        legend={"orientation": "h", "yanchor": "bottom", "y": -0.25},
     )
     return dark_layout(fig, "Resilience Dimensions — City Comparison", 500)
 

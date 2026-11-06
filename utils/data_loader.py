@@ -7,10 +7,12 @@ All pages load data through this module. Adding a new city requires only:
   No code changes to this file or any page.
 """
 from __future__ import annotations
+
 import json
+from pathlib import Path
+
 import pandas as pd
 import streamlit as st
-from pathlib import Path
 
 
 @st.cache_data

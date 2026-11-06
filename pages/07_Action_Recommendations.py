@@ -3,12 +3,18 @@ FloodWatch Kenya — Action Recommendations Engine
 Translates policy enforcement data into ranked, actionable government briefings.
 Organised by intervention type, urgency, and estimated lives saved.
 """
-import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from utils.data_loader import load_all_policies, load_all_incidents, load_cities, city_selector
+import streamlit as st
+
 from utils.charts import dark_layout
+from utils.data_loader import (
+    city_selector,
+    load_all_incidents,
+    load_all_policies,
+    load_cities,
+)
 
 st.set_page_config(
     page_title="Action Recommendations — FloodWatch Kenya",
@@ -140,8 +146,8 @@ def build_recommendations(df: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for _, row in active.iterrows():
         blocker_type = classify_blocker(row.get("blocking_factor", ""))
-        action_label, urgency_override, sort_order = BLOCKER_TO_ACTION[blocker_type]
-        status_urgency, status_sort = STATUS_URGENCY.get(row["status"], ("Medium", 3))
+        action_label, urgency_override, _sort_order = BLOCKER_TO_ACTION[blocker_type]
+        status_urgency, _status_sort = STATUS_URGENCY.get(row["status"], ("Medium", 3))
 
         # Urgency: take the higher of blocker and status signals
         urgency_rank = {"Critical": 1, "High": 2, "Medium": 3, "Low": 4}
