@@ -5,7 +5,7 @@
 [![Live App](https://img.shields.io/badge/Live%20App-floodwatch--kenya.streamlit.app-FF4B4B?logo=streamlit)](https://floodwatch-kenya.streamlit.app)
 [![Live Data](https://img.shields.io/badge/Live%20Data-Open--Meteo-00b4d8)](#floodwatch-kenya)
 [![CI](https://github.com/gabrielmahia/floodwatch-kenya/actions/workflows/ci.yml/badge.svg)](https://github.com/gabrielmahia/floodwatch-kenya/actions)
-[![License](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey)](LICENSE)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm%20Noncommercial%201.0.0-blue.svg)](LICENSE)
 
 > **FloodWatch Kenya** /mɑːfuːɾikɔ/ — *Kiswahili*: floods, inundation.
 
@@ -140,7 +140,7 @@ Store in `.streamlit/secrets.toml`.
 ## IP & Collaboration
 
 **Owner:** Gabriel Mahia — `contact@aikungfu.dev`
-**License:** CC BY-NC-ND 4.0 — attribution required, no commercial use, no derivatives without permission.
+**License:** PolyForm Noncommercial 1.0.0 — free for personal, research, educational, nonprofit and government use, including modifying it for those purposes. Commercial use needs a separate licence: contact@aikungfu.dev.
 Data contributions (new cities, corrections with source citations) welcome via Issues.
 
 ---
